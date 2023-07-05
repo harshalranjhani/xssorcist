@@ -33,7 +33,8 @@ const Scanner = () => {
   return (
     <div>
       <nav className="navbar">
-        <h1>Website Vulnerability Scanner</h1>
+        <h1>XSSorcist</h1>
+        <h3>Scan websites anywhere anytime!</h3>
       </nav>
       <div className="scanner-container">
         <div className="input-container">
