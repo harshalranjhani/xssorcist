@@ -1,0 +1,91 @@
+/* Scanner.css */
+
+/* Global styles */
+body {
+    background-color: #222;
+    color: #fff;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Navbar styles */
+  .navbar {
+    background-color: #333;
+    padding: 10px;
+  }
+  
+  .navbar h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #fff;
+  }
+  
+  /* Container styles */
+  .scanner-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* Input container styles */
+  .input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .input-container input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background-color: #444;
+    color: #fff;
+  }
+  
+  .input-container button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .input-container button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Report container styles */
+  .report-container {
+    margin-top: 20px;
+  }
+  
+  /* Vulnerability item styles */
+  .vulnerability-item {
+    margin-bottom: 10px;
+    background-color: #333;
+    padding: 10px;
+  }
+  
+  .vulnerability-item p {
+    margin: 0;
+    color: #fff;
+  }
+  
+  /* Severity indicator styles */
+  .severity-low {
+    color: green;
+  }
+  
+  .severity-medium {
+    color: orange;
+  }
+  
+  .severity-high {
+    color: red;
+  }
+
+  .vulnerability-item {
+    word-break: break-word;
+  }
+  
