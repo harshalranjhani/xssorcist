@@ -75,10 +75,11 @@ const Scanner = () => {
               )}
             </div>
             <div>
-              <h3>Vulnerable Directories | Severity:{' '}
+              <h3>Vulnerable Directories {vulnerabilityReport?.vulnerableDirectories?.length !== 0 && <>
+                | Severity:{' '}
                         <span className={`severity-${vulnerabilityReport?.vulnerableDirectories[0]?.severity?.toLowerCase()}`}>
                           {vulnerabilityReport.vulnerableDirectories[0].severity}
-                        </span></h3>
+                        </span></>} </h3>
               {vulnerabilityReport?.vulnerableDirectories?.length === 0 ? (
                 <p>No vulnerable directories found.</p>
               ) : (
@@ -94,10 +95,11 @@ const Scanner = () => {
               )}
             </div>
             <div>
-              <h3>Vulnerable Files | Severity:{' '}
-                        <span className={`severity-${vulnerabilityReport.vulnerableFiles[0].severity.toLowerCase()}`}>
+              <h3>Vulnerable Files {vulnerabilityReport?.vulnerableFiles?.length !== 0 && <>
+                | Severity:{' '}
+                        <span className={`severity-${vulnerabilityReport?.vulnerableFiles[0]?.severity?.toLowerCase()}`}>
                           {vulnerabilityReport.vulnerableFiles[0].severity}
-                        </span></h3>
+                        </span></>} </h3>
               {vulnerabilityReport.vulnerableFiles.length === 0 ? (
                 <p>No vulnerable files found.</p>
               ) : (
