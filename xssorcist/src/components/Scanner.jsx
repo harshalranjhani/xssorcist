@@ -19,7 +19,7 @@ const Scanner = () => {
     setErrorMessage('');
 
     try {
-      const response = await axios.get(`http://localhost:3001/scan?url=${encodeURIComponent(url)}`);
+      const response = await axios.get(`https://xssorcist-backend.vercel.app/scan?url=${encodeURIComponent(url)}`);
       setVulnerabilityReport(response.data);
       console.log(response.data)
     } catch (error) {
