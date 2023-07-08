@@ -1,33 +1,68 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './Scanner.css'; // Import CSS file for styling
+import React, { useState } from "react";
+import axios from "axios";
+import "./Scanner.css"; // Import CSS file for styling
 
 const Scanner = () => {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState("");
   const [vulnerabilityReport, setVulnerabilityReport] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleScan = async () => {
     setVulnerabilityReport(null);
     if (!url) {
-      setErrorMessage('Please enter a URL');
+      setErrorMessage("Please enter a URL");
       return;
     }
 
     setIsLoading(true);
-    setErrorMessage('');
+    setErrorMessage("");
 
     try {
-      const response = await axios.get(`https://xssorcist-backend.vercel.app/scan?url=${encodeURIComponent(url)}`);
+      const response = await axios.get(
+        `https://xssorcist-backend.vercel.app/scan?url=${encodeURIComponent(
+          url
+        )}`
+      );
       setVulnerabilityReport(response.data);
-      console.log(response.data)
+      console.log(response.data);
     } catch (error) {
-      console.error('Error scanning website:', error);
-      setErrorMessage('Error scanning website. Please try again.');
+      console.error("Error scanning website:", error);
+      setErrorMessage("Error scanning website. Please try again.");
     }
 
     setIsLoading(false);
+  };
+
+  const generatePDF = () => {
+    // Send a POST request to the backend with the data
+    if (!vulnerabilityReport) {
+      return;
+    }
+    fetch("https://xssorcist-backend.vercel.app/generate-pdf", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ vulnerabilityReport }),
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        // Create a temporary URL for the generated PDF
+        const url = window.URL.createObjectURL(new Blob([blob]));
+
+        // Create a temporary link and click it to trigger the download
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "output.pdf");
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up the temporary URL and link
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => console.error(error));
   };
 
   return (
@@ -45,12 +80,27 @@ const Scanner = () => {
             onChange={(e) => setUrl(e.target.value)}
             placeholder="Enter website URL"
           />
-          <button className="scan-button" onClick={handleScan} disabled={isLoading}>
+          <button
+            className="scan-button"
+            onClick={handleScan}
+            disabled={isLoading}
+          >
             Scan
           </button>
         </div>
-        {isLoading && <p className="loading-message">Scanning in progress...</p>}
+        {isLoading && (
+          <p className="loading-message">Scanning in progress...</p>
+        )}
         {errorMessage && <p className="error-message">{errorMessage}</p>}
+        {vulnerabilityReport && (
+          <button
+            className="scan-button"
+            onClick={generatePDF}
+            disabled={isLoading}
+          >
+            Download Report
+          </button>
+        )}
         {vulnerabilityReport && (
           <div className="report-container">
             <h2>Vulnerability Report</h2>
@@ -60,57 +110,78 @@ const Scanner = () => {
                 <p>No vulnerable software found.</p>
               ) : (
                 <ul className="vulnerability-list">
-                  {vulnerabilityReport?.vulnerableSoftware?.map((vulnerableSoftware, index) => (
-                    <li className="vulnerability-item" key={index}>
-                      <p>
-                        Software: {vulnerableSoftware.software} | Version: {vulnerableSoftware.version} | Severity:{' '}
-                        <span className={`severity-${vulnerableSoftware.severity.toLowerCase()}`}>
-                          {vulnerableSoftware.severity}
-                        </span>
-                      </p>
-                      <p>Vulnerability: {vulnerableSoftware.vulnerability}</p>
-                    </li>
-                  ))}
+                  {vulnerabilityReport?.vulnerableSoftware?.map(
+                    (vulnerableSoftware, index) => (
+                      <li className="vulnerability-item" key={index}>
+                        <p>
+                          Software: {vulnerableSoftware.software} | Version:{" "}
+                          {vulnerableSoftware.version} | Severity:{" "}
+                          <span
+                            className={`severity-${vulnerableSoftware.severity.toLowerCase()}`}
+                          >
+                            {vulnerableSoftware.severity}
+                          </span>
+                        </p>
+                        <p>Vulnerability: {vulnerableSoftware.vulnerability}</p>
+                      </li>
+                    )
+                  )}
                 </ul>
               )}
             </div>
             <div>
-              <h3>Vulnerable Directories {vulnerabilityReport?.vulnerableDirectories?.length !== 0 && <>
-                | Severity:{' '}
-                        <span className={`severity-${vulnerabilityReport?.vulnerableDirectories[0]?.severity?.toLowerCase()}`}>
-                          {vulnerabilityReport.vulnerableDirectories[0].severity}
-                        </span></>} </h3>
+              <h3>
+                Vulnerable Directories{" "}
+                {vulnerabilityReport?.vulnerableDirectories?.length !== 0 && (
+                  <>
+                    | Severity:{" "}
+                    <span
+                      className={`severity-${vulnerabilityReport?.vulnerableDirectories[0]?.severity?.toLowerCase()}`}
+                    >
+                      {vulnerabilityReport.vulnerableDirectories[0].severity}
+                    </span>
+                  </>
+                )}{" "}
+              </h3>
               {vulnerabilityReport?.vulnerableDirectories?.length === 0 ? (
                 <p>No vulnerable directories found.</p>
               ) : (
                 <ul className="vulnerability-list">
-                  {vulnerabilityReport?.vulnerableDirectories?.map((vulnerableDirectory, index) => (
-                    <li className="vulnerability-item" key={index}>
-                      <p>
-                        Directory: {vulnerableDirectory.directory} 
-                      </p>
-                    </li>
-                  ))}
+                  {vulnerabilityReport?.vulnerableDirectories?.map(
+                    (vulnerableDirectory, index) => (
+                      <li className="vulnerability-item" key={index}>
+                        <p>Directory: {vulnerableDirectory.directory}</p>
+                      </li>
+                    )
+                  )}
                 </ul>
               )}
             </div>
             <div>
-              <h3>Vulnerable Files {vulnerabilityReport?.vulnerableFiles?.length !== 0 && <>
-                | Severity:{' '}
-                        <span className={`severity-${vulnerabilityReport?.vulnerableFiles[0]?.severity?.toLowerCase()}`}>
-                          {vulnerabilityReport.vulnerableFiles[0].severity}
-                        </span></>} </h3>
+              <h3>
+                Vulnerable Files{" "}
+                {vulnerabilityReport?.vulnerableFiles?.length !== 0 && (
+                  <>
+                    | Severity:{" "}
+                    <span
+                      className={`severity-${vulnerabilityReport?.vulnerableFiles[0]?.severity?.toLowerCase()}`}
+                    >
+                      {vulnerabilityReport.vulnerableFiles[0].severity}
+                    </span>
+                  </>
+                )}{" "}
+              </h3>
               {vulnerabilityReport.vulnerableFiles.length === 0 ? (
                 <p>No vulnerable files found.</p>
               ) : (
                 <ul className="vulnerability-list">
-                  {vulnerabilityReport.vulnerableFiles[0].files.map((vulnerableFile, index) => (
-                    <li className="vulnerability-item" key={index}>
-                      <p>
-                        File: {vulnerableFile} 
-                      </p>
-                    </li>
-                  ))}
+                  {vulnerabilityReport.vulnerableFiles[0].files.map(
+                    (vulnerableFile, index) => (
+                      <li className="vulnerability-item" key={index}>
+                        <p>File: {vulnerableFile}</p>
+                      </li>
+                    )
+                  )}
                 </ul>
               )}
             </div>
