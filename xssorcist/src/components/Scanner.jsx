@@ -39,12 +39,14 @@ const Scanner = () => {
     if (!vulnerabilityReport) {
       return;
     }
-    fetch("https://xssorcist-backend.vercel.app/generate-pdf", {
+    fetch("http://localhost:3001/generate-pdf", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ vulnerabilityReport, url }),
+      body: JSON.stringify({
+        vulnerabilityReport: { ...vulnerabilityReport, url },
+      }),
     })
       .then((response) => response.blob())
       .then((blob) => {
