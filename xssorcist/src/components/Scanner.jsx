@@ -44,7 +44,7 @@ const Scanner = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ vulnerabilityReport }),
+      body: JSON.stringify({ vulnerabilityReport, url }),
     })
       .then((response) => response.blob())
       .then((blob) => {
@@ -54,7 +54,7 @@ const Scanner = () => {
         // Create a temporary link and click it to trigger the download
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", "output.pdf");
+        link.setAttribute("download", "Vulnerability Report - XSSorcist.pdf");
         document.body.appendChild(link);
         link.click();
 
