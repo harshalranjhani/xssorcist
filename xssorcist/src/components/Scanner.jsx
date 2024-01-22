@@ -7,6 +7,8 @@ const Scanner = () => {
   const [vulnerabilityReport, setVulnerabilityReport] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const backendUrl = `https://xssorcist-backend.vercel.app`
+  // const backendUrl = `http://localhost:3001`;
 
   const handleScan = async () => {
     setVulnerabilityReport(null);
@@ -20,9 +22,7 @@ const Scanner = () => {
 
     try {
       const response = await axios.get(
-        `https://xssorcist-backend.vercel.app/scan?url=${encodeURIComponent(
-          url
-        )}`
+        `${backendUrl}/scan?url=${encodeURIComponent(url)}`
       );
       setVulnerabilityReport(response.data);
       console.log(response.data);
@@ -39,7 +39,7 @@ const Scanner = () => {
     if (!vulnerabilityReport) {
       return;
     }
-    fetch("https://xssorcist-backend.vercel.app/generate-pdf", {
+    fetch(`${backendUrl}/generate-pdf`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -181,6 +181,62 @@ const Scanner = () => {
                     (vulnerableFile, index) => (
                       <li className="vulnerability-item" key={index}>
                         <p>File: {vulnerableFile}</p>
+                      </li>
+                    )
+                  )}
+                </ul>
+              )}
+            </div>
+            <div>
+              <h3>
+                XSS Vulnerability URL{" "}
+                {vulnerabilityReport?.hasXSSInURLData?.length !== 0 && (
+                  <>
+                    | Severity:{" "}
+                    <span
+                      className={`severity-${vulnerabilityReport?.hasXSSInURLData[0]?.severity?.toLowerCase()}`}
+                    >
+                      {vulnerabilityReport?.hasXSSInURLData[0]?.severity}
+                    </span>
+                  </>
+                )}{" "}
+              </h3>
+              {vulnerabilityReport?.hasXSSInURLData?.length === 0 ? (
+                <p>No vulnerabilities found.</p>
+              ) : (
+                <ul className="vulnerability-list">
+                  {vulnerabilityReport?.hasXSSInURLData?.map(
+                    (vulnerableXSS, index) => (
+                      <li className="vulnerability-item" key={index}>
+                        <p>Parameter: {vulnerableXSS.parameter}</p>
+                      </li>
+                    )
+                  )}
+                </ul>
+              )}
+            </div>
+            <div>
+              <h3>
+                XSS Vulnerability in Form Inputs{" "}
+                {vulnerabilityReport?.hasXSSInFormsData?.length !== 0 && (
+                  <>
+                    | Severity:{" "}
+                    <span
+                      className={`severity-${vulnerabilityReport?.hasXSSInFormsData[0]?.severity?.toLowerCase()}`}
+                    >
+                      {vulnerabilityReport?.hasXSSInFormsData[0]?.severity}
+                    </span>
+                  </>
+                )}{" "}
+              </h3>
+              {vulnerabilityReport?.hasXSSInFormsData?.length === 0 ? (
+                <p>No vulnerabilities found.</p>
+              ) : (
+                <ul className="vulnerability-list">
+                  {vulnerabilityReport?.hasXSSInFormsData?.map(
+                    (vulnerableXSS, index) => (
+                      <li className="vulnerability-item" key={index}>
+                        <p>Field: {vulnerableXSS.field}</p>
                       </li>
                     )
                   )}
