@@ -25,7 +25,6 @@ const Scanner = () => {
         `${backendUrl}/scan?url=${encodeURIComponent(url)}`
       );
       setVulnerabilityReport(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error("Error scanning website:", error);
       setErrorMessage("Error scanning website. Please try again.");
